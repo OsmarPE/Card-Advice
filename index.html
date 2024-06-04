@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- displays site properly based on user's device -->
+    <meta name="description" content="Card generate advice  " />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="./images/favicon-32x32.png"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <title>Frontend Mentor | Advice generator app</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- Incluir React y ReactDOM desde una CDN -->
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <!-- Incluir Babel para poder usar JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Tu código de React -->
+    <script type="text/babel">
+      // Aquí va tu código React
+    </script>
+  </body>
+  <script type="text/babel">
+    // Crear un componente de React
+    const API = "https://api.adviceslip.com/advice";
+    const { useState, useEffect } = React;
+    
+    function App() {
+
+      const { data,loading,setdata,setloading,setResearch } = useFetch(API)
+
+      const { id, advice } = data;
+
+      return (
+        <div className="body">
+          <div className="main">
+            <h1 className="main__title">Advice #{id}</h1>
+            {loading ? (
+              <div className="loading">
+                <div className="loading__body"></div>
+              </div>
+            ) : (
+              <p className="main__copy">{advice}</p>
+            )}
+            <div className="main__bg"></div>
+            <button
+              className="main__btn"
+              disabled={loading}
+              onClick={() => setResearch(prevState => !prevState)}
+            >
+              <img src="images/icon-dice.svg" alt="icon of dice" />
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    function useFetch(api) {
+      const [loading, setloading] = useState(true);
+      const [data, setdata] = useState("");
+      const [research, setResearch] = useState(false)
+
+      useEffect(() => {
+        setloading(true)
+        fetch(api)
+          .then((response) => response.json())
+          .then((data) => {
+            setdata(data.slip);
+          })
+          .finally(() => setloading(false));
+      }, [research]);
+
+      return {
+        loading,
+        data,
+        setdata,
+        setloading,
+        research,
+        setResearch
+      };
+    }
+
+    // Renderizar el componente en el elemento con id 'root'
+    ReactDOM.render(<App />, document.getElementById("root"));
+  </script>
+  <!-- <script src="app.js"></script> -->
+</html>
